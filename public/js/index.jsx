@@ -5,10 +5,9 @@ var Comment = React.createClass({
     return this.props.onDelete(comment);
   },
   render: function() {
-    console.debug('PROPS', this.props);
     return (
       <div className="record">
-        <img src={this.props.children} className="album" width="300" height="300"/>
+        <img src={this.props.imgUrl} className="album" width="300" height="300"/>
         <div className="info">
           <h1>
             { this.props.artist }
@@ -28,15 +27,16 @@ var CommentList = React.createClass({
     return this.props.delete(comment);
   },
   render: function() {
-    var  commentNodes = this.props.data.map(function(comment, index) {
-      console.log('COMMENT', comment);
+    console.debug('PROPS', this.props);
+    var  commentNodes = this.props.records.map(function(comment, index) {
       return (
-        <Comment artist={ comment.artist } title={ comment.title } onDelete={ this.handleDelete } key={ index }>
-          { comment.imgUrl }
-        </Comment>
+        <Comment artist={ comment.artist } 
+                 title={ comment.title } 
+                 imgUrl={ comment.imgUrl } 
+                 onDelete={ this.handleDelete } 
+                 key={ index } />
       );
     }.bind(this));
-    console.log('COMMENTLIST', commentNodes);
     return (
       <div>
         { commentNodes }
@@ -71,13 +71,12 @@ var CommentList = React.createClass({
 
 var CommentBox = React.createClass({
   loadCommentsFromServer: function() {
-    console.log("Loaded comments from server");
     $.ajax({
       url: '/records',
       dataType: 'json',
       cache: false,
-      success: function(data) {
-        this.setState({data: data});
+      success: function(records) {
+        this.setState({records: records});
       }.bind(this),
       error: function() {
         console.error(this.props.url, status, err.toString());
@@ -122,7 +121,7 @@ var CommentBox = React.createClass({
   // },
   getInitialState: function() {
     return {
-      data: []
+      records: []
     };
   },
   componentDidMount: function() {
@@ -130,11 +129,10 @@ var CommentBox = React.createClass({
     // setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   render: function() {
-    console.debug("RENDERING??");
         // <CommentForm onCommentSubmit={this.handleCommentSubmit} />
     return (
       <div className="col-md-8">
-        <CommentList data={ this.state.data } delete={ this.deleteComment }/>
+        <CommentList records={ this.state.records } delete={ this.deleteComment }/>
       </div>
     );
   }
