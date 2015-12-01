@@ -1,0 +1,104 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: "Lucida Grande";
+  padding: 10px;
+  background-color: #EFEFEF;
+}
+
+.navbar-default {
+  background-color: rgba(248, 248, 248, 0.96);
+}
+
+h1 {
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+h3 {
+  margin-top: 0px;
+}
+
+.row {
+  padding-top: 50px;
+}
+
+.record {
+  /*width: 60%;*/
+  width: 93%;
+  height: 334px;
+}
+
+.info {
+  display: inline-block;
+  position: relative;
+  top: -20px;  
+}
+
+.album {
+  width: 300px;
+  float: left;
+}
+
+input {
+  width: 80%;
+}
+
+.addForm {
+  position: fixed;
+  margin: 30px;
+  width: 400px;
+}
+
+.add {
+  width: 155px;
+  margin: 2px 0px;
+}
+
+#editForm {
+  height: 150px;
+  width: 248px;
+}
+
+#editForm input {
+  width: 100%;
+}
+
+#editForm .add {
+  width: 130px;
+}
+
+@media screen and (max-width: 990px) {
+  
+  .navbar-default {
+    height: 106px;
+    background-color: rgba(68, 66, 66, 0.98);
+  }
+
+  .navbar-default .navbar-brand {
+    color: #cacaca;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  .info {
+    width: 248px;
+  }
+
+  .addForm {
+    width: 90%;
+    position: relative;
+  }
+  .album {
+    width: 250px;
+    height: 250px;
+  }
+}
