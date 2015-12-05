@@ -31,9 +31,9 @@ app.get('/records', function(req, res) {
     modelParams.title = req.query.title;
   }
   RecordModel.find(modelParams, function(err, records) {
-    setTimeout(function() {
+    // setTimeout(function() {
       res.send(records);
-    }, Math.random() * 3000);
+    // }, Math.random() * 3000);
   });
 });
 

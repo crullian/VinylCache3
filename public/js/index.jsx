@@ -1,8 +1,8 @@
 var Comment = React.createClass({
   handleDelete: function(e) {
     e.preventDefault();
-    var comment = {"author":this.props.author, "text": this.props.text};
-    return this.props.onDelete(comment);
+    var record = {"artist":this.props.artist, "title": this.props.title};
+    return this.props.onDelete(record);
   },
   render: function() {
     return (
@@ -15,7 +15,7 @@ var Comment = React.createClass({
           <h3>
             { this.props.title }
           </h3>
-          <div className="btn btn-danger" onClick={this.handleDelete}>delete</div>
+          {/*<div className="btn btn-danger" onClick={this.handleDelete}>delete</div>*/}
         </div>
       </div>
     )
@@ -23,23 +23,23 @@ var Comment = React.createClass({
 });
 
 var CommentList = React.createClass({
-  handleDelete: function(comment) {
-    return this.props.delete(comment);
+  handleDelete: function(record) {
+    return this.props.delete(record);
   },
   render: function() {
     console.debug('PROPS', this.props);
-    var  commentNodes = this.props.records.map(function(comment, index) {
+    var  records = this.props.records.map(function(record, index) {
       return (
-        <Comment artist={ comment.artist } 
-                 title={ comment.title } 
-                 imgUrl={ comment.imgUrl } 
+        <Comment artist={ record.artist } 
+                 title={ record.title } 
+                 imgUrl={ record.imgUrl } 
                  onDelete={ this.handleDelete } 
                  key={ index } />
       );
     }.bind(this));
     return (
       <div>
-        { commentNodes }
+        { records }
       </div>
     );
   }
