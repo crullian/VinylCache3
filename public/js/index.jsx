@@ -27,7 +27,7 @@ var CommentList = React.createClass({
     return this.props.delete(record);
   },
   render: function() {
-    console.debug('PROPS', this.props);
+    console.debug('PROPS', this.props.records);
     var  records = this.props.records.map(function(record, index) {
       return (
         <Comment artist={ record.artist } 
@@ -45,37 +45,53 @@ var CommentList = React.createClass({
   }
 });
 
-// var CommentForm = React.createClass({
-//   handleSubmit: function(e) {
-//     e.preventDefault();
-//     var author = React.findDOMNode(this.refs.author).value.trim();
-//     var text = React.findDOMNode(this.refs.text).value.trim();
-//     if(!text || !author) {
-//       return;
-//     }
-//     this.props.onCommentSubmit({author: author, text: text});
-//     React.findDOMNode(this.refs.author).value = '';
-//     React.findDOMNode(this.refs.text).value = '';
-//     return;
-//   },
-//   render: function() {
-//     return ( 
-//       <form className="commentForm" onSubmit={this.handleSubmit}>
-//         <input type="text" placeholder="Your name" ref="author" />
-//         <input type="text" placeholder="Say something..." ref="text" />
-//         <input className="btn btn-primary" type="submit" value="Post" />
-//       </form>
-//     );
-//   }
-// });
+var CommentForm = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var artist = React.findDOMNode(this.refs.artist).value.trim();
+    var title = React.findDOMNode(this.refs.title).value.trim();
+    var imgUrl = React.findDOMNode(this.refs.imgUrl).value.trim();
+    if(!title || !artist || !imgUrl) {
+      return;
+    }
+    this.props.onCommentSubmit({artist: artist, title: title, imgUrl: imgUrl});
+    React.findDOMNode(this.refs.artist).value = '';
+    React.findDOMNode(this.refs.title).value = '';
+    React.findDOMNode(this.refs.imgUrl).value = '';
+    return;
+  },
+  render: function() {
+      {/*<form className="addForm" onSubmit={this.handleSubmit}>
+        <input type="text" placeholder="Your name" ref="author" />
+        <input type="text" placeholder="Say something..." ref="text" />
+        <input className="btn btn-primary" type="submit" value="Post" />
+      </form>*/}
+    return ( 
+      <form className="addForm" name="submitForm" onSubmit={this.handleSubmit}>
+        <input type="text" required placeholder="artist" ref="artist"/><br />
+        <input type="text" required placeholder="title"ref="title"/><br />
+        <input type="text" required placeholder="image url"ref="imgUrl"/><br />
+        <button className="btn btn-info add" type="submit" value="Post">Add Some Vinyl</button>
+      </form>
+    );
+  }
+});
 
 var CommentBox = React.createClass({
+  compare: function(a,b) {
+    if (a.artist < b.artist)
+      return -1;
+    if (a.artist > b.artist)
+      return 1;
+    return 0;
+  },
   loadCommentsFromServer: function() {
     $.ajax({
       url: '/records',
       dataType: 'json',
       cache: false,
       success: function(records) {
+        records = records.sort(this.compare);
         this.setState({records: records});
       }.bind(this),
       error: function() {
@@ -83,24 +99,28 @@ var CommentBox = React.createClass({
       }.bind(this)
     });
   },
-  // handleCommentSubmit: function(comment) {
-  //   var comments = this.state.data;
-  //   var newComments = comments.concat([comment]);
-  //   this.setState({data: newComments});
-  //   console.log("Submitting to the server");
-  //   $.ajax({
-  //     url: this.props.url,
-  //     dataType: 'json',
-  //     type: 'POST',
-  //     data: comment,
-  //     success: function(data) {
-  //       this.setState({data: data});
-  //     }.bind(this),
-  //     error: function(xhr, status, err) {
-  //       console.error(this.props.url, status, err.toString());
-  //     }.bind(this)
-  //   });
-  // },
+  handleCommentSubmit: function(record) {
+    // var comments = this.state.records;
+    // console.debug('STATE RECORDS', this.state.records);
+    // console.debug('NEW RECORD', record);
+    // var newComments = comments.concat([record]);
+    // newComments = newComments.sort(this.compare);
+    // this.setState({records: newComments});
+    // console.log("Submitting to the server");
+    $.ajax({
+      url: '/records',
+      dataType: 'json',
+      type: 'POST',
+      data: record,
+      success: function(data) {
+        data.sort(this.compare);
+        this.setState({records: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   // deleteComment: function(comment) {
   //   // var comments = this.state.data;
   //   // var updatedComments = comments.splice(comments.indexOf([comment]), 1);
@@ -129,10 +149,14 @@ var CommentBox = React.createClass({
     // setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   render: function() {
-        // <CommentForm onCommentSubmit={this.handleCommentSubmit} />
     return (
-      <div className="col-md-8">
-        <CommentList records={ this.state.records } delete={ this.deleteComment }/>
+      <div className="row">
+        <div className="col-md-4">
+          <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+        </div>
+        <div className="col-md-8 list">
+          <CommentList records={ this.state.records } delete={ this.deleteComment }/>
+        </div>
       </div>
     );
   }
