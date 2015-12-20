@@ -29,6 +29,10 @@ h3 {
   padding-top: 30px;
 }
 
+.search-bar {
+  margin-bottom: 35px;
+}
+
 .record {
   /*width: 60%;*/
   width: 93%;

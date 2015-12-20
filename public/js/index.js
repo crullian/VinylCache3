@@ -1,36 +1,12 @@
-var FilteredList = React.createClass({
-  filterList: function(event){
-    var updatedList = this.state.initialItems;
-    updatedList = updatedList.filter(function(item){
-      return item.toLowerCase().search(
-        event.target.value.toLowerCase()) !== -1;
-    });
-    this.setState({items: updatedList});
-  },
-  getInitialState: function(){
-     return {
-       initialItems: [
-         "Apples",
-         "Broccoli",
-         "Chicken",
-         "Duck",
-         "Eggs",
-         "Fish",
-         "Granola",
-         "Hash Browns"
-       ],
-       items: []
-     }
-  },
-  componentWillMount: function() {
-    this.setState({items: this.state.initialItems})
-  },
+var NavBar = React.createClass({
   render: function() {
     return (
-      <div className="filter-list">
-        <input type="text" placeholder="Search" onChange={this.filterList}/>
-      <List items={this.state.items}/>
-      </div>
+      <nav className="nav navbar-default navbar-fixed-top">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="/">VinylCache</a>
+          
+        </div>
+      </nav>
     );
   }
 });
@@ -65,8 +41,13 @@ var CommentList = React.createClass({
   },
   render: function() {
     console.debug('PROPS', this.props.records);
-    var  records = this.props.records.map(function(record, index) {
-      return (
+    var records =[];
+    this.props.records.forEach(function(record, index) {
+      var searchString = record.artist.toLowerCase().concat(' ', record.title.toLowerCase())
+      if (searchString.indexOf(this.props.filterText.toLowerCase()) === -1) {
+        return;
+      }
+      records.push(
         <Comment artist={ record.artist } 
                  title={ record.title } 
                  imgUrl={ record.imgUrl } 
@@ -74,6 +55,7 @@ var CommentList = React.createClass({
                  key={ index } />
       );
     }.bind(this));
+    
     return (
       <div>
         { records }
@@ -98,11 +80,6 @@ var CommentForm = React.createClass({
     return;
   },
   render: function() {
-      {/*<form className="addForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Your name" ref="author" />
-        <input type="text" placeholder="Say something..." ref="text" />
-        <input className="btn btn-primary" type="submit" value="Post" />
-      </form>*/}
     return ( 
       <form className="addForm" name="submitForm" onSubmit={this.handleSubmit}>
         <input type="text" required placeholder="artist" ref="artist"/><br />
@@ -114,7 +91,29 @@ var CommentForm = React.createClass({
   }
 });
 
-var CommentBox = React.createClass({
+var SearchBar = React.createClass({
+  handleChange: function() {
+    this.props.onUserInput(
+      React.findDOMNode(this.refs.filterTextInput).value
+    );
+  },
+  render: function() {
+    return (
+      <form className="search-bar">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={this.props.filterText}
+          ref="filterTextInput"
+          onChange={this.handleChange}
+          autoFocus
+        />
+      </form>
+    );
+  }
+});
+
+var RecordApp = React.createClass({
   compare: function(a,b) {
     if (a.artist < b.artist)
       return -1;
@@ -176,35 +175,37 @@ var CommentBox = React.createClass({
   //     }.bind(this)
   //   });
   // },
-  filterList: function(event){
-    var updatedList = this.state.records;
-    console.log('EVENT', event.target.value);
-    updatedList = updatedList.filter(function(item){
-      return item.artist.toLowerCase().search(
-        event.target.value.toLowerCase()) !== -1;
+  handleUserInput: function(filterText) {
+    this.setState({
+      filterText: filterText
     });
-    this.setState({records: updatedList});
   },
   getInitialState: function() {
     return {
+      filterText: '',
       records: []
     };
   },
   componentDidMount: function() {
     this.loadCommentsFromServer(); 
-    // setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   render: function() {
     console.debug('STATE RECORDS', this.state.records);
-    console.debug('PROPS RECORDS', this.props.records);
     return (
-      <div className="row">
-        <div className="col-md-4">
-          <CommentForm onCommentSubmit={this.handleCommentSubmit} />
-        </div>
-        <div className="col-md-8 list">
-          <input type="text" placeholder="Search" onChange={this.filterList}/>
-          <CommentList records={ this.state.records } delete={ this.deleteComment }/>
+      <div>
+        <NavBar />
+        <div className="row">
+          <div className="col-md-4">
+            <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+          </div>
+          <div className="col-md-8 list">
+            {/*<input type="text" placeholder="Search" onChange={this.filterList}/>*/}
+            <SearchBar filterText={this.state.filterText} onUserInput={this.handleUserInput} />
+
+            <CommentList records={ this.state.records } 
+                         delete={ this.deleteComment }
+                         filterText={this.state.filterText} />
+          </div>
         </div>
       </div>
     );
@@ -212,6 +213,6 @@ var CommentBox = React.createClass({
 });
 
 React.render(
-  <CommentBox />,
+  <RecordApp />,
   document.getElementById('content')
 );
