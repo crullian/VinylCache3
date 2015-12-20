@@ -1,7 +1,44 @@
+var FilteredList = React.createClass({
+  filterList: function(event){
+    var updatedList = this.state.initialItems;
+    updatedList = updatedList.filter(function(item){
+      return item.toLowerCase().search(
+        event.target.value.toLowerCase()) !== -1;
+    });
+    this.setState({items: updatedList});
+  },
+  getInitialState: function(){
+     return {
+       initialItems: [
+         "Apples",
+         "Broccoli",
+         "Chicken",
+         "Duck",
+         "Eggs",
+         "Fish",
+         "Granola",
+         "Hash Browns"
+       ],
+       items: []
+     }
+  },
+  componentWillMount: function() {
+    this.setState({items: this.state.initialItems})
+  },
+  render: function() {
+    return (
+      <div className="filter-list">
+        <input type="text" placeholder="Search" onChange={this.filterList}/>
+      <List items={this.state.items}/>
+      </div>
+    );
+  }
+});
+
 var Comment = React.createClass({
   handleDelete: function(e) {
     e.preventDefault();
-    var record = {"artist":this.props.artist, "title": this.props.title};
+    var record = {"artist":this.props.artist, "title": this.props.title, "imgUrl": this.props.imgUrl};
     return this.props.onDelete(record);
   },
   render: function() {
@@ -139,22 +176,34 @@ var CommentBox = React.createClass({
   //     }.bind(this)
   //   });
   // },
+  filterList: function(event){
+    var updatedList = this.state.records;
+    console.log('EVENT', event.target.value);
+    updatedList = updatedList.filter(function(item){
+      return item.artist.toLowerCase().search(
+        event.target.value.toLowerCase()) !== -1;
+    });
+    this.setState({records: updatedList});
+  },
   getInitialState: function() {
     return {
       records: []
     };
   },
   componentDidMount: function() {
-    this.loadCommentsFromServer();
+    this.loadCommentsFromServer(); 
     // setInterval(this.loadCommentsFromServer, this.props.pollInterval);
   },
   render: function() {
+    console.debug('STATE RECORDS', this.state.records);
+    console.debug('PROPS RECORDS', this.props.records);
     return (
       <div className="row">
         <div className="col-md-4">
           <CommentForm onCommentSubmit={this.handleCommentSubmit} />
         </div>
         <div className="col-md-8 list">
+          <input type="text" placeholder="Search" onChange={this.filterList}/>
           <CommentList records={ this.state.records } delete={ this.deleteComment }/>
         </div>
       </div>
