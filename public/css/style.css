@@ -29,9 +29,9 @@ h3 {
   padding-top: 30px;
 }
 
-.search-bar {
+/*.search-bar {
   margin-bottom: 35px;
-}
+}*/
 
 .record {
   /*width: 60%;*/
@@ -108,6 +108,11 @@ input {
     width: 90%;
     position: relative;
   }
+
+  .record {
+    margin: auto 30px;
+  }
+
   .album {
     width: 250px;
     height: 250px;

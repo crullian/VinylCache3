@@ -1,10 +1,18 @@
 var NavBar = React.createClass({
+  getInitialState: function() {
+    return {
+      filterText: ''
+    };
+  },
+  handleUserInput: function(filterText) {
+    return this.props.setSearchInput(filterText);
+  },
   render: function() {
     return (
       <nav className="nav navbar-default navbar-fixed-top">
         <div className="container-fluid">
           <a className="navbar-brand" href="/">VinylCache</a>
-          
+          <SearchBar onUserInput={this.handleUserInput} />
         </div>
       </nav>
     );
@@ -14,7 +22,12 @@ var NavBar = React.createClass({
 var Comment = React.createClass({
   handleDelete: function(e) {
     e.preventDefault();
-    var record = {"artist":this.props.artist, "title": this.props.title, "imgUrl": this.props.imgUrl};
+    var record = {
+      'artist': this.props.artist, 
+      'title': this.props.title, 
+      'imgUrl': this.props.imgUrl,
+      'id': this.props.id
+    };
     return this.props.onDelete(record);
   },
   render: function() {
@@ -28,7 +41,7 @@ var Comment = React.createClass({
           <h3>
             { this.props.title }
           </h3>
-          {/*<div className="btn btn-danger" onClick={this.handleDelete}>delete</div>*/}
+          <div className="btn btn-danger" onClick={this.handleDelete}>delete</div>
         </div>
       </div>
     )
@@ -51,6 +64,7 @@ var CommentList = React.createClass({
         <Comment artist={ record.artist } 
                  title={ record.title } 
                  imgUrl={ record.imgUrl } 
+                 id={record._id}
                  onDelete={ this.handleDelete } 
                  key={ index } />
       );
@@ -99,9 +113,10 @@ var SearchBar = React.createClass({
   },
   render: function() {
     return (
-      <form className="search-bar">
+      <form className="navbar-form navbar-right">
         <input
           type="text"
+          className="form-control"
           placeholder="Search..."
           value={this.props.filterText}
           ref="filterTextInput"
@@ -136,13 +151,6 @@ var RecordApp = React.createClass({
     });
   },
   handleCommentSubmit: function(record) {
-    // var comments = this.state.records;
-    // console.debug('STATE RECORDS', this.state.records);
-    // console.debug('NEW RECORD', record);
-    // var newComments = comments.concat([record]);
-    // newComments = newComments.sort(this.compare);
-    // this.setState({records: newComments});
-    // console.log("Submitting to the server");
     $.ajax({
       url: '/records',
       dataType: 'json',
@@ -157,24 +165,22 @@ var RecordApp = React.createClass({
       }.bind(this)
     });
   },
-  // deleteComment: function(comment) {
-  //   // var comments = this.state.data;
-  //   // var updatedComments = comments.splice(comments.indexOf([comment]), 1);
-  //   // this.setState({data: updatedComments});
-  //   console.log('Deleted Comment:', comment);
-  //   $.ajax({
-  //     url: this.props.url,
-  //     dataType: 'json',
-  //     type: 'PUT',
-  //     data: comment,
-  //     success: function(data) {
-  //       this.setState({data: data});
-  //     }.bind(this),
-  //     error: function(xhr, status, err) {
-  //       console.error(this.props.url, status, err.toString());
-  //     }.bind(this)
-  //   });
-  // },
+  deleteComment: function(comment) {
+    var id = comment.id;
+    $.ajax({
+      url: '/records/' + id,
+      dataType: 'json',
+      type: 'DELETE',
+      data: comment,
+      success: function(data) {
+        data.sort(this.compare);
+        this.setState({records: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   handleUserInput: function(filterText) {
     this.setState({
       filterText: filterText
@@ -190,18 +196,16 @@ var RecordApp = React.createClass({
     this.loadCommentsFromServer(); 
   },
   render: function() {
-    console.debug('STATE RECORDS', this.state.records);
     return (
       <div>
-        <NavBar />
+        <NavBar setSearchInput={this.handleUserInput} filterText={this.state.filterText}/>
         <div className="row">
           <div className="col-md-4">
             <CommentForm onCommentSubmit={this.handleCommentSubmit} />
           </div>
           <div className="col-md-8 list">
             {/*<input type="text" placeholder="Search" onChange={this.filterList}/>*/}
-            <SearchBar filterText={this.state.filterText} onUserInput={this.handleUserInput} />
-
+          
             <CommentList records={ this.state.records } 
                          delete={ this.deleteComment }
                          filterText={this.state.filterText} />
