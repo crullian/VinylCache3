@@ -49,7 +49,7 @@ var CommentList = React.createClass({
   },
   render: function() {
     var loader = null;
-    if(this.props.records.length){
+    if(!this.props.records.length){
       loader = <img src="../images/loader.svg" />;
     }
     console.debug('PROPS', this.props.records);
