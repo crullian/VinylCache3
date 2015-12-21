@@ -1,9 +1,4 @@
 var NavBar = React.createClass({
-  getInitialState: function() {
-    return {
-      filterText: ''
-    };
-  },
   handleUserInput: function(filterText) {
     return this.props.setSearchInput(filterText);
   },
@@ -53,6 +48,10 @@ var CommentList = React.createClass({
     return this.props.delete(record);
   },
   render: function() {
+    var loader = null;
+    if(this.props.records.length){
+      loader = <img src="../images/loader.svg" />;
+    }
     console.debug('PROPS', this.props.records);
     var records =[];
     this.props.records.forEach(function(record, index) {
@@ -60,6 +59,7 @@ var CommentList = React.createClass({
       if (searchString.indexOf(this.props.filterText.toLowerCase()) === -1) {
         return;
       }
+
       records.push(
         <Comment artist={ record.artist } 
                  title={ record.title } 
@@ -72,6 +72,7 @@ var CommentList = React.createClass({
     
     return (
       <div>
+        { loader }
         { records }
       </div>
     );
@@ -196,6 +197,7 @@ var RecordApp = React.createClass({
     this.loadCommentsFromServer(); 
   },
   render: function() {
+
     return (
       <div>
         <NavBar setSearchInput={this.handleUserInput} filterText={this.state.filterText}/>
@@ -205,7 +207,7 @@ var RecordApp = React.createClass({
           </div>
           <div className="col-md-8 list">
             {/*<input type="text" placeholder="Search" onChange={this.filterList}/>*/}
-          
+            
             <CommentList records={ this.state.records } 
                          delete={ this.deleteComment }
                          filterText={this.state.filterText} />
