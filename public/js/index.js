@@ -15,17 +15,48 @@ var NavBar = React.createClass({
 });
 
 var Comment = React.createClass({
+  getInitialState: function() {
+    return { isEditing: false };
+  },
+  showEdit: function(e) {
+    this.setState({isEditing: (this.state.isEditing ? false : true)});
+    e.target.textContent === "Edit" ? e.target.textContent = "Close" : e.target.textContent = "Edit";
+    // // el.style.display === 'hidden' ? el.style.display = '' : el.style.display = 'hidden';
+    // // el.classList.toggle('show');
+    // // el.style.display = (el.style.display = 'none' ? 'block' : 'none');
+    // var dis = el.style.display;
+    // console.log(dis);
+    // if (dis === 'none') {
+    //   el.style.display = 'block';
+    // } else {
+    //   el.style.display = 'none';
+    // }
+  },
   handleDelete: function(e) {
     e.preventDefault();
+    console.log(e.target.parentNode.parentNode);
     var record = {
       'artist': this.props.artist, 
       'title': this.props.title, 
       'imgUrl': this.props.imgUrl,
       'id': this.props.id
     };
+    this.setState({isEditing: false});
     return this.props.onDelete(record);
   },
   render: function() {
+    var editForm;
+    if (this.state.isEditing) {
+      editForm = (<form id="editForm">
+                    <input id="artist" value={this.props.artist} /><br />
+                    <input id="title" value={this.props.title} /><br />
+                    <input id="imgUrl" value={this.props.imgUrl} /><br />
+                    <div className="btn btn-info update">Submit edits</div>
+                    <div className="btn btn-danger" onClick={this.handleDelete}>Remove</div>
+                  </form>);
+    } else {
+      editForm = null;
+    }
     return (
       <div className="record">
         <img src={this.props.imgUrl} className="album" width="300" height="300"/>
@@ -36,7 +67,10 @@ var Comment = React.createClass({
           <h3>
             { this.props.title }
           </h3>
-          <div className="btn btn-danger" onClick={this.handleDelete}>delete</div>
+          <div className="btn btn-default edit" onClick={this.showEdit}>Edit</div>
+          <div>
+            {editForm}
+          </div>
         </div>
       </div>
     )
