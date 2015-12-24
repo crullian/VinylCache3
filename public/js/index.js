@@ -16,7 +16,12 @@ var NavBar = React.createClass({
 
 var Comment = React.createClass({
   getInitialState: function() {
-    return { isEditing: false };
+    return { 
+      isEditing: false,
+      artist: this.props.artist,
+      title: null,
+      imgUrl: null,
+    };
   },
   showEdit: function(e) {
     this.setState({isEditing: (this.state.isEditing ? false : true)});
@@ -32,9 +37,24 @@ var Comment = React.createClass({
     //   el.style.display = 'none';
     // }
   },
+  handleUpdate: function(e) {
+    e.preventDefault();
+    console.log('UPDATING');
+    console.log('ARTIST STATE', this.state.artist);
+    var record = {
+      'artist': this.state.artist ? this.state.artist : this.props.artist, 
+      'title': this.state.title ? this.state.title : this.props.title, 
+      'imgUrl': this.state.imgUrl ? this.state.imgUrl : this.props.imgUrl,
+      'id': this.props.id
+    };
+    this.setState({isEditing: false});
+    return this.props.onUpdate(record);
+  },
   handleDelete: function(e) {
     e.preventDefault();
-    console.log(e.target.parentNode.parentNode);
+    var editButton = e.target.parentNode.parentNode.parentNode.children[2];
+    console.log('DELETE parentNode', editButton);
+    editButton.textContent = "Edit";
     var record = {
       'artist': this.props.artist, 
       'title': this.props.title, 
@@ -44,18 +64,20 @@ var Comment = React.createClass({
     this.setState({isEditing: false});
     return this.props.onDelete(record);
   },
+  editArtist: function(e) {
+    console.log('EVENT', e.target.value);
+    this.setState({artist: e.target.value});
+  },
   render: function() {
     var editForm;
     if (this.state.isEditing) {
       editForm = (<form id="editForm">
-                    <input id="artist" value={this.props.artist} /><br />
+                    <input id="artist" defaultValue={this.props.artist} ref="artist" onChange={this.editArtist}/><br />
                     <input id="title" value={this.props.title} /><br />
-                    <input id="imgUrl" value={this.props.imgUrl} /><br />
-                    <div className="btn btn-info update">Submit edits</div>
+                    <input id="imgUrl" value={this.props.imgUrl} ref='imgUrl' /><br />
+                    <div className="btn btn-info update" onClick={this.handleUpdate}>Submit edits</div>
                     <div className="btn btn-danger" onClick={this.handleDelete}>Remove</div>
                   </form>);
-    } else {
-      editForm = null;
     }
     return (
       <div className="record">
@@ -81,6 +103,9 @@ var CommentList = React.createClass({
   handleDelete: function(record) {
     return this.props.delete(record);
   },
+  handleUpdate: function(record) {
+    return this.props.update(record);
+  },
   render: function() {
     var loader = null;
     if(!this.props.records.length){
@@ -100,6 +125,7 @@ var CommentList = React.createClass({
                  imgUrl={ record.imgUrl } 
                  id={record._id}
                  onDelete={ this.handleDelete } 
+                 onUpdate={ this.handleUpdate }
                  key={ index } />
       );
     }.bind(this));
@@ -116,16 +142,16 @@ var CommentList = React.createClass({
 var CommentForm = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
-    var artist = React.findDOMNode(this.refs.artist).value.trim();
-    var title = React.findDOMNode(this.refs.title).value.trim();
-    var imgUrl = React.findDOMNode(this.refs.imgUrl).value.trim();
+    var artist = React.findDOMNode(this.refs.artist).value;
+    var title  = React.findDOMNode(this.refs.title).value;
+    var imgUrl = React.findDOMNode(this.refs.imgUrl).value;
     if(!title || !artist || !imgUrl) {
       return;
     }
-    this.props.onCommentSubmit({artist: artist, title: title, imgUrl: imgUrl});
-    React.findDOMNode(this.refs.artist).value = '';
-    React.findDOMNode(this.refs.title).value = '';
-    React.findDOMNode(this.refs.imgUrl).value = '';
+    this.props.onCommentSubmit({artist: artist.trim(), title: title.trim(), imgUrl: imgUrl.trim()});
+    artist = '';
+    title = '';
+    imgUrl = '';
     return;
   },
   render: function() {
@@ -164,6 +190,15 @@ var SearchBar = React.createClass({
 });
 
 var RecordApp = React.createClass({
+  getInitialState: function() {
+    return {
+      filterText: '',
+      records: []
+    };
+  },
+  componentDidMount: function() {
+    this.loadCommentsFromServer(); 
+  },
   compare: function(a,b) {
     if (a.artist < b.artist)
       return -1;
@@ -200,7 +235,23 @@ var RecordApp = React.createClass({
       }.bind(this)
     });
   },
-  deleteComment: function(comment) {
+  updateRecord: function(record) {
+    var id = record.id;
+    $.ajax({
+      url: '/records/' + id,
+      dataType: 'json',
+      type: 'PUT',
+      data: record,
+      success: function(data) {
+        data.sort(this.compare);
+        this.setState({records: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(status, err.toString());
+      }.bind(this)
+    });
+  },
+  deleteRecord: function(comment) {
     var id = comment.id;
     $.ajax({
       url: '/records/' + id,
@@ -221,15 +272,6 @@ var RecordApp = React.createClass({
       filterText: filterText
     });
   },
-  getInitialState: function() {
-    return {
-      filterText: '',
-      records: []
-    };
-  },
-  componentDidMount: function() {
-    this.loadCommentsFromServer(); 
-  },
   render: function() {
 
     return (
@@ -243,7 +285,8 @@ var RecordApp = React.createClass({
             {/*<input type="text" placeholder="Search" onChange={this.filterList}/>*/}
             
             <CommentList records={ this.state.records } 
-                         delete={ this.deleteComment }
+                         delete={ this.deleteRecord }
+                         update={ this.updateRecord }
                          filterText={this.state.filterText} />
           </div>
         </div>
