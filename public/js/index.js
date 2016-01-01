@@ -140,11 +140,11 @@ var CommentForm = React.createClass({
       return;
     }
     this.props.onCommentSubmit({artist: artist.trim(), title: title.trim(), imgUrl: imgUrl.trim()});
-    artist = '';
-    title = '';
-    imgUrl = '';
-    return;
+    ReactDOM.findDOMNode(this.refs.artist).value = '';
+    ReactDOM.findDOMNode(this.refs.title).value = '';
+    ReactDOM.findDOMNode(this.refs.imgUrl).value = '';
     console.log('ARTIST', artist);
+    return;
   },
   render: function() {
     return ( 
@@ -275,7 +275,6 @@ var RecordApp = React.createClass({
             <CommentForm onCommentSubmit={this.handleCommentSubmit} />
           </div>
           <div className="col-md-8 list">
-            {/*<input type="text" placeholder="Search" onChange={this.filterList}/>*/}
             
             <CommentList records={ this.state.records } 
                          delete={ this.deleteRecord }
