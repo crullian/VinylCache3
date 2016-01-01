@@ -1,8 +1,17 @@
-var NavBar = React.createClass({
-  handleUserInput: function(filterText) {
+import React from "react";
+import ReactDOM from "react-dom";
+// import Greeting from "./components/greeting";
+
+// ReactDOM.render(
+//   <Greeting name="World"/>,
+//   document.getElementById('content')
+// );
+
+let NavBar = React.createClass({
+  handleUserInput(filterText) {
     return this.props.setSearchInput(filterText);
   },
-  render: function() {
+  render() {
     return (
       <nav className="nav navbar-default navbar-fixed-top">
         <div className="container-fluid">
@@ -18,7 +27,7 @@ var Comment = React.createClass({
   getInitialState: function() {
     return { 
       isEditing: false,
-      artist: this.props.artist,
+      artist: null,
       title: null,
       imgUrl: null,
     };
@@ -26,16 +35,6 @@ var Comment = React.createClass({
   showEdit: function(e) {
     this.setState({isEditing: (this.state.isEditing ? false : true)});
     e.target.textContent === "Edit" ? e.target.textContent = "Close" : e.target.textContent = "Edit";
-    // // el.style.display === 'hidden' ? el.style.display = '' : el.style.display = 'hidden';
-    // // el.classList.toggle('show');
-    // // el.style.display = (el.style.display = 'none' ? 'block' : 'none');
-    // var dis = el.style.display;
-    // console.log(dis);
-    // if (dis === 'none') {
-    //   el.style.display = 'block';
-    // } else {
-    //   el.style.display = 'none';
-    // }
   },
   handleUpdate: function(e) {
     e.preventDefault();
@@ -73,8 +72,8 @@ var Comment = React.createClass({
     if (this.state.isEditing) {
       editForm = (<form id="editForm">
                     <input id="artist" defaultValue={this.props.artist} ref="artist" onChange={this.editArtist}/><br />
-                    <input id="title" value={this.props.title} /><br />
-                    <input id="imgUrl" value={this.props.imgUrl} ref='imgUrl' /><br />
+                    <input id="title"  defaultValue={this.props.title} ref="title" /><br />
+                    <input id="imgUrl" defaultValue={this.props.imgUrl} ref='imgUrl' /><br />
                     <div className="btn btn-info update" onClick={this.handleUpdate}>Submit edits</div>
                     <div className="btn btn-danger" onClick={this.handleDelete}>Remove</div>
                   </form>);
@@ -277,6 +276,7 @@ var RecordApp = React.createClass({
     return (
       <div>
         <NavBar setSearchInput={this.handleUserInput} filterText={this.state.filterText}/>
+
         <div className="row">
           <div className="col-md-4">
             <CommentForm onCommentSubmit={this.handleCommentSubmit} />
@@ -295,7 +295,7 @@ var RecordApp = React.createClass({
   }
 });
 
-React.render(
+ReactDOM.render(
   <RecordApp />,
   document.getElementById('content')
 );
