@@ -4,7 +4,7 @@
 
 html, body {
   font-family: "Lucida Grande";
-  padding: 10px;
+  padding: 15px 0;
   background-color: #EFEFEF;
 }
 
@@ -22,7 +22,7 @@ h3 {
 }
 
 .row {
-  padding-top: 50px;
+  padding-top: 65px;
 }
 
 .list {
@@ -30,11 +30,13 @@ h3 {
 }
 
 .record {
+  padding-bottom: 5px;
   width: 93%;
   height: 334px;
 }
 
 .info {
+  width: 50%;
   display: inline-block;
   position: relative;
   /*top: -20px;  */
@@ -87,6 +89,11 @@ input {
     color: #cacaca;
   }
 
+  .navbar-form {
+    border: none;
+    box-shadow: none;
+  }
+
   h1 {
     font-size: 25px;
   }
@@ -111,5 +118,10 @@ input {
   .album {
     width: 250px;
     height: 250px;
+  }
+}
+@media screen and (max-width: 450px) {
+    .record {
+      height: initial;
   }
 }
