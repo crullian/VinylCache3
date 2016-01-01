@@ -1,0 +1,18 @@
+<div>
+  <img class="album" width="300" height="300" ng-src="{{ record.imgUrl }}"/>
+  <div class="info">
+    <h1>{{ record.artist }}</h1>
+    <h3>{{ record.title }}</h3>
+    <!-- <button class="btn btn-default edit" disabled ng-click="toggleEdit()">Edit</button> -->
+    <div class="edit"></div>
+    <div id="editForm">
+      <form name="submitForm" ng-show="isEditing">
+        <input required ng-model="record.artist"/><br />
+        <input required ng-model="record.title"/><br />
+        <input required ng-model="record.imgUrl"/><br />
+        <button class="btn btn-info add" ng-click="updateRecord(record)">Submit edits</button>
+        <button class="btn btn-danger del" ng-click="remove(record)">Remove</button>
+      </form>
+    </div> 
+  </div>
+</div>

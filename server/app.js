@@ -52,7 +52,6 @@ app.post('/records', function(req, res) {
 
 app.put('/records/:id', function(req, res) {
   RecordModel.findById(req.params.id, function(err, record) {
-    console.log('RECORD', record);
     console.log("REQ.PARAMS: ", req.params);
     console.log("REQ.BODY: ", req.body);
     record.update(req.body, function() {
@@ -61,10 +60,7 @@ app.put('/records/:id', function(req, res) {
           console.log(err);
         } else {
           console.log('Hoooray, Updated!')
-          // res.status(200).end();
-          RecordModel.find({}, function(err, records) {
-            res.send(records);
-          })
+          res.status(200).end();
         }
       })
     })

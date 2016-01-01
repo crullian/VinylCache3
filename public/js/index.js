@@ -1,11 +1,8 @@
-import React from "react";
-import ReactDOM from "react-dom";
-
-let NavBar = React.createClass({
-  handleUserInput(filterText) {
+var NavBar = React.createClass({
+  handleUserInput: function(filterText) {
     return this.props.setSearchInput(filterText);
   },
-  render() {
+  render: function() {
     return (
       <nav className="nav navbar-default navbar-fixed-top">
         <div className="container-fluid">
@@ -18,58 +15,17 @@ let NavBar = React.createClass({
 });
 
 var Comment = React.createClass({
-  getInitialState: function() {
-    return { 
-      isEditing: false,
-      artist: null,
-      title: null,
-      imgUrl: null,
-    };
-  },
-  showEdit: function(e) {
-    this.setState({isEditing: (this.state.isEditing ? false : true)});
-    e.target.textContent === "Edit" ? e.target.textContent = "Close" : e.target.textContent = "Edit";
-  },
-  handleUpdate: function(e) {
-    e.preventDefault();
-    var editButton = e.target.parentNode.parentNode.parentNode.children[2];
-    editButton.textContent = "Edit";
-    var record = {
-      'artist': this.state.artist ? this.state.artist : this.props.artist, 
-      'title': this.state.title ? this.state.title : this.props.title, 
-      'imgUrl': this.state.imgUrl ? this.state.imgUrl : this.props.imgUrl,
-      'id': this.props.id
-    };
-    this.setState({isEditing: false});
-    return this.props.onUpdate(record);
-  },
   handleDelete: function(e) {
     e.preventDefault();
-    var editButton = e.target.parentNode.parentNode.parentNode.children[2];
-    editButton.textContent = "Edit";
     var record = {
       'artist': this.props.artist, 
       'title': this.props.title, 
       'imgUrl': this.props.imgUrl,
       'id': this.props.id
     };
-    this.setState({isEditing: false});
     return this.props.onDelete(record);
   },
-  editArtist: function(e) {
-    this.setState({artist: e.target.value});
-  },
   render: function() {
-    var editForm;
-    if (this.state.isEditing) {
-      editForm = (<form id="editForm">
-                    <input id="artist" defaultValue={this.props.artist} ref="artist" onChange={this.editArtist}/><br />
-                    <input id="title"  defaultValue={this.props.title} ref="title" /><br />
-                    <input id="imgUrl" defaultValue={this.props.imgUrl} ref='imgUrl' /><br />
-                    <div className="btn btn-info update" onClick={this.handleUpdate}>Submit edits</div>
-                    <div className="btn btn-danger" onClick={this.handleDelete}>Remove</div>
-                  </form>);
-    }
     return (
       <div className="record">
         <img src={this.props.imgUrl} className="album" width="300" height="300"/>
@@ -80,10 +36,7 @@ var Comment = React.createClass({
           <h3>
             { this.props.title }
           </h3>
-          <div className="btn btn-default edit" onClick={this.showEdit}>Edit</div>
-          <div>
-            {editForm}
-          </div>
+          <div className="btn btn-danger" onClick={this.handleDelete}>delete</div>
         </div>
       </div>
     )
@@ -94,14 +47,12 @@ var CommentList = React.createClass({
   handleDelete: function(record) {
     return this.props.delete(record);
   },
-  handleUpdate: function(record) {
-    return this.props.update(record);
-  },
   render: function() {
     var loader = null;
     if(!this.props.records.length){
       loader = <img src="../images/loader.svg" />;
     }
+    console.debug('PROPS', this.props.records);
     var records =[];
     this.props.records.forEach(function(record, index) {
       var searchString = record.artist.toLowerCase().concat(' ', record.title.toLowerCase())
@@ -115,7 +66,6 @@ var CommentList = React.createClass({
                  imgUrl={ record.imgUrl } 
                  id={record._id}
                  onDelete={ this.handleDelete } 
-                 onUpdate={ this.handleUpdate }
                  key={ index } />
       );
     }.bind(this));
@@ -131,19 +81,17 @@ var CommentList = React.createClass({
 
 var CommentForm = React.createClass({
   handleSubmit: function(e) {
-    console.debug('SUBMITTING');
     e.preventDefault();
-    var artist = ReactDOM.findDOMNode(this.refs.artist).value;
-    var title  = ReactDOM.findDOMNode(this.refs.title).value;
-    var imgUrl = ReactDOM.findDOMNode(this.refs.imgUrl).value;
+    var artist = React.findDOMNode(this.refs.artist).value.trim();
+    var title = React.findDOMNode(this.refs.title).value.trim();
+    var imgUrl = React.findDOMNode(this.refs.imgUrl).value.trim();
     if(!title || !artist || !imgUrl) {
       return;
     }
-    this.props.onCommentSubmit({artist: artist.trim(), title: title.trim(), imgUrl: imgUrl.trim()});
-    ReactDOM.findDOMNode(this.refs.artist).value = '';
-    ReactDOM.findDOMNode(this.refs.title).value = '';
-    ReactDOM.findDOMNode(this.refs.imgUrl).value = '';
-    console.log('ARTIST', artist);
+    this.props.onCommentSubmit({artist: artist, title: title, imgUrl: imgUrl});
+    React.findDOMNode(this.refs.artist).value = '';
+    React.findDOMNode(this.refs.title).value = '';
+    React.findDOMNode(this.refs.imgUrl).value = '';
     return;
   },
   render: function() {
@@ -161,7 +109,7 @@ var CommentForm = React.createClass({
 var SearchBar = React.createClass({
   handleChange: function() {
     this.props.onUserInput(
-      ReactDOM.findDOMNode(this.refs.filterTextInput).value
+      React.findDOMNode(this.refs.filterTextInput).value
     );
   },
   render: function() {
@@ -182,15 +130,6 @@ var SearchBar = React.createClass({
 });
 
 var RecordApp = React.createClass({
-  getInitialState: function() {
-    return {
-      filterText: '',
-      records: []
-    };
-  },
-  componentDidMount: function() {
-    this.loadCommentsFromServer(); 
-  },
   compare: function(a,b) {
     if (a.artist < b.artist)
       return -1;
@@ -227,23 +166,7 @@ var RecordApp = React.createClass({
       }.bind(this)
     });
   },
-  updateRecord: function(record) {
-    var id = record.id;
-    $.ajax({
-      url: '/records/' + id,
-      dataType: 'json',
-      type: 'PUT',
-      data: record,
-      success: function(data) {
-        data.sort(this.compare);
-        this.setState({records: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(status, err.toString());
-      }.bind(this)
-    });
-  },
-  deleteRecord: function(comment) {
+  deleteComment: function(comment) {
     var id = comment.id;
     $.ajax({
       url: '/records/' + id,
@@ -264,21 +187,29 @@ var RecordApp = React.createClass({
       filterText: filterText
     });
   },
+  getInitialState: function() {
+    return {
+      filterText: '',
+      records: []
+    };
+  },
+  componentDidMount: function() {
+    this.loadCommentsFromServer(); 
+  },
   render: function() {
 
     return (
       <div>
         <NavBar setSearchInput={this.handleUserInput} filterText={this.state.filterText}/>
-
         <div className="row">
           <div className="col-md-4">
             <CommentForm onCommentSubmit={this.handleCommentSubmit} />
           </div>
           <div className="col-md-8 list">
+            {/*<input type="text" placeholder="Search" onChange={this.filterList}/>*/}
             
             <CommentList records={ this.state.records } 
-                         delete={ this.deleteRecord }
-                         update={ this.updateRecord }
+                         delete={ this.deleteComment }
                          filterText={this.state.filterText} />
           </div>
         </div>
@@ -287,7 +218,7 @@ var RecordApp = React.createClass({
   }
 });
 
-ReactDOM.render(
+React.render(
   <RecordApp />,
   document.getElementById('content')
 );
