@@ -1,11 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-// import Greeting from "./components/greeting";
-
-// ReactDOM.render(
-//   <Greeting name="World"/>,
-//   document.getElementById('content')
-// );
 
 let NavBar = React.createClass({
   handleUserInput(filterText) {
@@ -38,8 +32,8 @@ var Comment = React.createClass({
   },
   handleUpdate: function(e) {
     e.preventDefault();
-    console.log('UPDATING');
-    console.log('ARTIST STATE', this.state.artist);
+    var editButton = e.target.parentNode.parentNode.parentNode.children[2];
+    editButton.textContent = "Edit";
     var record = {
       'artist': this.state.artist ? this.state.artist : this.props.artist, 
       'title': this.state.title ? this.state.title : this.props.title, 
@@ -52,7 +46,6 @@ var Comment = React.createClass({
   handleDelete: function(e) {
     e.preventDefault();
     var editButton = e.target.parentNode.parentNode.parentNode.children[2];
-    console.log('DELETE parentNode', editButton);
     editButton.textContent = "Edit";
     var record = {
       'artist': this.props.artist, 
@@ -64,7 +57,6 @@ var Comment = React.createClass({
     return this.props.onDelete(record);
   },
   editArtist: function(e) {
-    console.log('EVENT', e.target.value);
     this.setState({artist: e.target.value});
   },
   render: function() {
@@ -110,7 +102,6 @@ var CommentList = React.createClass({
     if(!this.props.records.length){
       loader = <img src="../images/loader.svg" />;
     }
-    console.debug('PROPS', this.props.records);
     var records =[];
     this.props.records.forEach(function(record, index) {
       var searchString = record.artist.toLowerCase().concat(' ', record.title.toLowerCase())
@@ -140,10 +131,11 @@ var CommentList = React.createClass({
 
 var CommentForm = React.createClass({
   handleSubmit: function(e) {
+    console.debug('SUBMITTING');
     e.preventDefault();
-    var artist = React.findDOMNode(this.refs.artist).value;
-    var title  = React.findDOMNode(this.refs.title).value;
-    var imgUrl = React.findDOMNode(this.refs.imgUrl).value;
+    var artist = ReactDOM.findDOMNode(this.refs.artist).value;
+    var title  = ReactDOM.findDOMNode(this.refs.title).value;
+    var imgUrl = ReactDOM.findDOMNode(this.refs.imgUrl).value;
     if(!title || !artist || !imgUrl) {
       return;
     }
@@ -152,6 +144,7 @@ var CommentForm = React.createClass({
     title = '';
     imgUrl = '';
     return;
+    console.log('ARTIST', artist);
   },
   render: function() {
     return ( 
@@ -168,7 +161,7 @@ var CommentForm = React.createClass({
 var SearchBar = React.createClass({
   handleChange: function() {
     this.props.onUserInput(
-      React.findDOMNode(this.refs.filterTextInput).value
+      ReactDOM.findDOMNode(this.refs.filterTextInput).value
     );
   },
   render: function() {
