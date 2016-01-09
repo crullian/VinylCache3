@@ -15,14 +15,13 @@ export default class CommentList extends React.Component {
     if(!this.props.records.length){
       loader = <img src="../images/loader.svg" />;
     }
-    let records =[];
-    this.props.records.forEach(function(record, index) {
-      let searchString = record.artist.toLowerCase().concat(' ', record.title.toLowerCase()).replace(/\W/g, '');
-      if (searchString.indexOf(this.props.filterText.toLowerCase().replace(/\W/g, '')) === -1) {
-        return;
-      }
 
-      records.push(
+    let searchString = this.props.filterText.toLowerCase().replace(/\W/g, '');
+    let records = this.props.records.filter(record => {
+      let strTofind = record.artist.toLowerCase().concat(' ', record.title.toLowerCase()).replace(/\W/g, '');
+      return strTofind.indexOf(searchString) != -1;
+    }).map((record, index) => {
+      return (
         <Comment artist={ record.artist } 
                  title={ record.title } 
                  imgUrl={ record.imgUrl } 
@@ -31,7 +30,7 @@ export default class CommentList extends React.Component {
                  onUpdate={ this.handleUpdate.bind(this) }
                  key={ index } />
       );
-    }.bind(this));
+    });
     
     return (
       <div>
