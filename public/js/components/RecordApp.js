@@ -65,13 +65,12 @@ export default class RecordApp extends React.Component {
       }.bind(this)
     });
   }
-  deleteRecord(comment) {
-    let id = comment.id;
+  deleteRecord(id) {
     $.ajax({
       url: '/records/' + id,
       dataType: 'json',
       type: 'DELETE',
-      data: comment,
+      data: id,
       success: function(data) {
         data.sort(this.compare);
         this.setState({records: data});
