@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  padding: 5px;
 }
 
 html, body {
@@ -21,10 +22,6 @@ h3 {
   margin-top: 0px;
 }
 
-.row {
-  padding-top: 65px;
-}
-
 .list {
   padding-top: 30px;
 }
@@ -39,7 +36,6 @@ h3 {
   width: 50%;
   display: inline-block;
   position: relative;
-  /*top: -20px;  */
   margin-left: 10px;
 }
 
@@ -107,6 +103,7 @@ input {
   }
 
   .addForm {
+    padding-top: 65px;
     width: 90%;
     position: relative;
   }
