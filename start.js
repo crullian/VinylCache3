@@ -20,8 +20,11 @@ mongoose.connection.once('open', function() {
 });
 
 new WebpackDevServer(webpack(config), {
+   publicPath: config.output.publicPath,
    hot: true,
+   stats: {colors: true},
    historyApiFallback: true,
+   inline: true,
    proxy: {
      "*": "http://localhost:1335"
    }
