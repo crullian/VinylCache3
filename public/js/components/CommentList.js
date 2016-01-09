@@ -2,8 +2,8 @@ import React from "react";
 import Comment from "./Comment.js";
 
 export default class CommentList extends React.Component {
-  handleDelete(record) {
-    return this.props.delete(record);
+  handleDelete(recordId) {
+    return this.props.delete(recordId);
   }
 
   handleUpdate(record) {

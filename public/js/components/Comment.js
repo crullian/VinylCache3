@@ -10,16 +10,15 @@ export default class Comment extends React.Component {
   };
 
   showEdit(e) {
-    this.setState({isEditing: (this.state.isEditing ? false : true)});
-    e.target.textContent === "Edit" ? e.target.textContent = "Close" : e.target.textContent = "Edit";
+    this.setState({
+      isEditing: (this.state.isEditing ? false : true)
+    });
   }
 
   handleUpdate(e) {
     e.preventDefault();
-    let editButton = e.target.parentNode.parentNode.parentNode.children[2];
-    editButton.textContent = "Edit";
     let record = {
-      'artist': this.state.artist ? this.state.artist : this.props.artist, 
+      'artist': this.state.artist ? this.state.artist : this.props.artist,
       'title': this.state.title ? this.state.title : this.props.title, 
       'imgUrl': this.state.imgUrl ? this.state.imgUrl : this.props.imgUrl,
       'id': this.props.id
@@ -30,28 +29,25 @@ export default class Comment extends React.Component {
 
   handleDelete(e) {
     e.preventDefault();
-    let editButton = e.target.parentNode.parentNode.parentNode.children[2];
-    editButton.textContent = "Edit";
-    let record = {
-      'artist': this.props.artist, 
-      'title': this.props.title, 
-      'imgUrl': this.props.imgUrl,
-      'id': this.props.id
-    };
+    let recordId = this.props.id;
     this.setState({isEditing: false});
-    return this.props.onDelete(record);
+    this.props.onDelete(recordId);
   }
 
   render() {
-    let editForm;
+    let editForm = null;
+    let buttonText = 'Edit';
     if (this.state.isEditing) {
-      editForm = (<form id="editForm">
-                    <input id="artist" defaultValue={this.props.artist} ref="artist" onChange={e => this.setState({artist: e.target.value})}/><br />
-                    <input id="title"  defaultValue={this.props.title} ref="title" /><br />
-                    <input id="imgUrl" defaultValue={this.props.imgUrl} ref='imgUrl' /><br />
-                    <div className="btn btn-info update" onClick={this.handleUpdate.bind(this)}>Submit edits</div>
-                    <div className="btn btn-danger" onClick={this.handleDelete.bind(this)}>Remove</div>
-                  </form>);
+      editForm = (
+        <form id="editForm">
+          <input id="artist" defaultValue={this.props.artist} onChange={e => this.setState({artist: e.target.value})}/><br />
+          <input id="title"  defaultValue={this.props.title}  onChange={e => this.setState({title: e.target.value})}/><br />
+          <input id="imgUrl" defaultValue={this.props.imgUrl} onChange={e => this.setState({imgUrl: e.target.value})}/><br />
+          <div className="btn btn-info update" onClick={this.handleUpdate.bind(this)}>Submit edits</div>
+          <div className="btn btn-danger" onClick={this.handleDelete.bind(this)}>Remove</div>
+        </form>
+      );
+      buttonText = 'Close';
     }
 
     return (
@@ -64,7 +60,7 @@ export default class Comment extends React.Component {
           <h3>
             { this.props.title }
           </h3>
-          <div className="btn btn-default edit" onClick={this.showEdit.bind(this)}>Edit</div>
+          <div className="btn btn-default edit" onClick={this.showEdit.bind(this)}>{buttonText}</div>
           <div>
             {editForm}
           </div>
