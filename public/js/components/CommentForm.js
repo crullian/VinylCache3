@@ -18,7 +18,7 @@ export default class CommentForm extends React.Component {
   }
   render() {
     return ( 
-      <form className="addForm" name="submitForm" onSubmit={this.handleSubmit}>
+      <form className="addForm" name="submitForm" onSubmit={this.handleSubmit.bind(this)}>
         <input type="text" required placeholder="artist" ref="artist"/><br />
         <input type="text" required placeholder="title"ref="title"/><br />
         <input type="text" required placeholder="image url"ref="imgUrl"/><br />

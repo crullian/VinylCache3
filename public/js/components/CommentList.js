@@ -27,8 +27,8 @@ export default class CommentList extends React.Component {
                  title={ record.title } 
                  imgUrl={ record.imgUrl } 
                  id={record._id}
-                 onDelete={ this.handleDelete } 
-                 onUpdate={ this.handleUpdate }
+                 onDelete={ this.handleDelete.bind(this) } 
+                 onUpdate={ this.handleUpdate.bind(this) }
                  key={ index } />
       );
     }.bind(this));

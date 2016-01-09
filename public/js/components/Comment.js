@@ -43,6 +43,7 @@ export default class Comment extends React.Component {
   }
 
   editArtist(e) {
+    console.debug(e.target.value);
     this.setState({artist: e.target.value});
   }
 
@@ -50,11 +51,11 @@ export default class Comment extends React.Component {
     let editForm;
     if (this.state.isEditing) {
       editForm = (<form id="editForm">
-                    <input id="artist" defaultValue={this.props.artist} ref="artist" onChange={this.editArtist}/><br />
+                    <input id="artist" defaultValue={this.props.artist} ref="artist" onChange={this.editArtist.bind(this)}/><br />
                     <input id="title"  defaultValue={this.props.title} ref="title" /><br />
                     <input id="imgUrl" defaultValue={this.props.imgUrl} ref='imgUrl' /><br />
-                    <div className="btn btn-info update" onClick={this.handleUpdate}>Submit edits</div>
-                    <div className="btn btn-danger" onClick={this.handleDelete}>Remove</div>
+                    <div className="btn btn-info update" onClick={this.handleUpdate.bind(this)}>Submit edits</div>
+                    <div className="btn btn-danger" onClick={this.handleDelete.bind(this)}>Remove</div>
                   </form>);
     }
     return (
@@ -67,7 +68,7 @@ export default class Comment extends React.Component {
           <h3>
             { this.props.title }
           </h3>
-          <div className="btn btn-default edit" onClick={this.showEdit}>Edit</div>
+          <div className="btn btn-default edit" onClick={this.showEdit.bind(this)}>Edit</div>
           <div>
             {editForm}
           </div>
