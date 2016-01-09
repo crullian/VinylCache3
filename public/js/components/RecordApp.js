@@ -94,13 +94,13 @@ export default class RecordApp extends React.Component {
 
         <div className="row">
           <div className="col-md-4">
-            <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+            <CommentForm onCommentSubmit={this.handleCommentSubmit.bind(this)} />
           </div>
           <div className="col-md-8 list">
             
             <CommentList records={ this.state.records } 
-                         delete={ this.deleteRecord }
-                         update={ this.updateRecord }
+                         delete={ this.deleteRecord.bind(this) }
+                         update={ this.updateRecord.bind(this) }
                          filterText={this.state.filterText} />
           </div>
         </div>
