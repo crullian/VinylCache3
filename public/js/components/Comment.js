@@ -43,7 +43,6 @@ export default class Comment extends React.Component {
   }
 
   editArtist(e) {
-    console.debug(e.target.value);
     this.setState({artist: e.target.value});
   }
 
