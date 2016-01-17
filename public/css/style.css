@@ -22,6 +22,10 @@ h3 {
   margin-top: 0px;
 }
 
+.loader {
+  margin-left: 12%;
+}
+
 .list {
   padding-top: 30px;
 }
@@ -118,7 +122,10 @@ input {
   }
 }
 @media screen and (max-width: 450px) {
-    .record {
-      height: initial;
+  .record {
+    height: initial;
   }
+  .loader {
+    margin-left: 35%;
+}
 }
