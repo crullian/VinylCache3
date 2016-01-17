@@ -14,7 +14,7 @@ var port = process.env.PORT || 1335;
 
 mongoose.connection.once('open', function() {
   server.listen(port, function() {
-    console.log('Server started on port: ', port);
+    console.log('NODE Server started on port: ', port);
   });
 });
 
@@ -35,6 +35,6 @@ if (isDev) {
        console.log(err);
      }
 
-     console.log('Listening at localhost:8080');
+     console.log('WEBPACK Listening at localhost:8080');
   });
 }
