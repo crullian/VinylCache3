@@ -13,7 +13,11 @@ export default class CommentList extends React.Component {
   render() {
     let loader = null;
     if(!this.props.records.length){
-      loader = <img src="../images/loader.svg" />;
+      loader = (
+        <div className="loader">
+          <img src="../images/loader.svg" />
+        </div>
+      );
     }
 
     let searchString = this.props.filterText.toLowerCase().replace(/\W/g, '');

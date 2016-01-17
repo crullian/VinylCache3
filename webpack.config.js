@@ -2,13 +2,13 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  context: __dirname + "/public",
+  // context: __dirname + "",
   entry: [
     // javascript: "./js/index.js",
     // html: "../index.html"
     'webpack-dev-server/client?http://localhost:8080',
     'webpack/hot/only-dev-server',
-    './js/index.js'
+    './public/js/index.js'
   ],
 
   output: {
@@ -20,6 +20,10 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin()
   ],
+
+  resolve: {
+    extensions:['', '.js']
+  },
   
   module: {
     loaders: [
