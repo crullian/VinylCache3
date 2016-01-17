@@ -1,7 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
-var config = require('./webpack.config.js');
 var isDev = (process.env.NODE_ENV !== 'production');
 
 var DATABASE_URI = require(path.join(__dirname, './server/env')).DATABASE_URI;
@@ -21,6 +19,8 @@ mongoose.connection.once('open', function() {
 });
 
 if (isDev) {
+  var WebpackDevServer = require('webpack-dev-server');
+  var config = require('./webpack.config.js');
   new WebpackDevServer(webpack(config), {
      publicPath: config.output.publicPath,
      hot: true,
