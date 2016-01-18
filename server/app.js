@@ -46,21 +46,19 @@ app.post('/records', function(req, res) {
       RecordModel.find({}, function(err, records) {
         res.send(records);
       })
+    } else {
+      console.log(err);
     }
   });
 });
 
 app.put('/records/:id', function(req, res) {
   RecordModel.findById(req.params.id, function(err, record) {
-    console.log('RECORD', record);
-    console.log("REQ.PARAMS: ", req.params);
-    console.log("REQ.BODY: ", req.body);
     record.update(req.body, function() {
       record.save(function(err) {
         if (err) {
           console.log(err);
         } else {
-          console.log('Hoooray, Updated!')
           // res.status(200).end();
           RecordModel.find({}, function(err, records) {
             res.send(records);

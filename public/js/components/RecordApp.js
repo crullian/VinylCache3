@@ -14,9 +14,11 @@ export default class RecordApp extends React.Component {
     this.loadCommentsFromServer(); 
   }
   compare(a,b) {
-    if (a.artist < b.artist)
+    let a_artist = a.artist.replace('The ', '');
+    let b_artist = b.artist.replace('The ', '');
+    if (a_artist < b_artist)
       return -1;
-    if (a.artist > b.artist)
+    if (a_artist > b_artist)
       return 1;
     return 0;
   }
